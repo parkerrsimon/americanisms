@@ -828,11 +828,46 @@
       .landing-tagline { white-space: normal; font-size: 18px; }
     }
 
+    /* ── MOBILE (390px / iPhone) ── */
+    @media (max-width: 480px) {
+      /* Banner — shrink text so it doesn't overflow on small viewports */
+      .banner-text { font-size: 10px; letter-spacing: 0; }
+
+      /* Landing — tighten vertical spacing */
+      .card-stack { margin-bottom: 40px; }
+
+      /* Game header */
+      .game-header { margin-bottom: 32px; }
+
+      /* Card stage */
+      .card-stage { margin-bottom: 40px; }
+
+      /* Guess input — let it stretch to fill available width instead of fixed 256px */
+      .guess-input-row { width: 100%; }
+      .guess-input-group { flex: 1; min-width: 0; }
+      .guess-input { width: 100%; }
+      .feedback-msg { width: 100%; }
+
+      /* End screen — reduce top padding and scale score number */
+      .end-screen { padding: 40px 0 60px; }
+      .end-score-number { font-size: clamp(72px, 18vw, 96px); }
+      .end-score-denom { font-size: clamp(72px, 18vw, 96px); }
+
+      /* Result rows — top-align so icon sits at top when idiom wraps */
+      .result-row { align-items: flex-start; }
+      .result-icon { margin-top: 2px; }
+      .result-idiom { font-size: 17px; }
+
+      /* About screen — tighten gaps and padding */
+      .about-screen { gap: 48px; padding: 32px 16px 80px; }
+      .about-section { gap: 28px; }
+      .about-body { font-size: 18px; }
+      .faq-answer { font-size: 18px; }
+    }
+
     @media (max-width: 400px) {
       :root { --card-w: 284px; --card-h: 406px; }
       .reveal-idiom { font-size: 40px; }
-      .stamp { width: 170px; height: 170px; }
-      .stamp-main { font-size: 20px; }
     }
   </style>
 </head>
