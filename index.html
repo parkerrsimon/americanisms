@@ -45,6 +45,18 @@
       border-radius: 4px;
     }
 
+    /* Card stack: large offset so the ring wraps the full fanned deck */
+    .card-stack:focus-visible {
+      outline-offset: 32px;
+      border-radius: 16px;
+    }
+
+    /* Game logo: gentle corner radius instead of full pill */
+    .game-logo:focus-visible {
+      outline-offset: 4px;
+      border-radius: 6px;
+    }
+
     :root {
       /* Design system — Parker Simon */
       --bg:           #FFFFFF;  /* white */
@@ -85,15 +97,13 @@
 
     /* ── GOVERNMENT BANNER ── */
     #gov-banner {
-      position: fixed;
-      top: 0; left: 0; right: 0;
+      position: relative;
       background: #222222;
       border-bottom: 0.5px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 16px;
-      z-index: 9999;
     }
 
     .banner-text {
@@ -107,7 +117,7 @@
 
     #app {
       min-height: 100vh;
-      padding-top: calc(var(--banner-h) + 40px);
+      padding-top: 40px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -255,6 +265,7 @@
       color: var(--ink);
       letter-spacing: var(--tracking);
       transition: opacity 0.15s ease;
+      background: none; border: none; padding: 0; cursor: pointer;
     }
     .game-logo:hover { opacity: 0.5; }
 
@@ -869,6 +880,28 @@
       :root { --card-w: 284px; --card-h: 406px; }
       .reveal-idiom { font-size: 40px; }
     }
+
+    /* ── SCREEN-READER ONLY utility ── */
+    .sr-only {
+      position: absolute; width: 1px; height: 1px;
+      padding: 0; margin: -1px; overflow: hidden;
+      clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+    }
+
+    /* ── REDUCED MOTION — respect user OS preference ── */
+    @media (prefers-reduced-motion: reduce) {
+      #app                        { transition: none !important; }
+      .card-rise                  { animation: none !important; }
+      .card-fade-out              { animation: none !important; opacity: 0 !important; }
+      .reveal-overlay             { animation: none !important; }
+      .reveal-overlay.dismissing  { animation: none !important; opacity: 0 !important; }
+      .reveal-content             { animation: none !important; }
+      .digit-roll,
+      .digit-roll-final           { animation: none !important; opacity: 1 !important; filter: none !important; transform: none !important; }
+      .result-row                 { animation: none !important; opacity: 1 !important; }
+      .faq-icon                   { transition: none !important; }
+      .stack-card                 { transition: none !important; }
+    }
   </style>
 </head>
 <body>
@@ -1120,7 +1153,7 @@ function renderLanding() {
     <div class="landing">
       <h1 class="landing-wordmark">Americanisms</h1>
       <p class="landing-tagline">An interactive game exploring America's favorite words.</p>
-      <div class="card-stack" onclick="startGame()">
+      <div class="card-stack" onclick="startGame()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();startGame();}" role="button" tabindex="0" aria-label="Deal the cards">
         <div class="stack-card stack-card-back s4"></div>
         <div class="stack-card stack-card-back s3"></div>
         <div class="stack-card stack-card-back s2"></div>
@@ -1160,7 +1193,7 @@ function _renderAboutContent() {
         <h2 class="about-title">FAQs</h2>
         <div class="faq-list">
           <div class="faq-item">
-            <div class="faq-question" onclick="toggleFaq(this)" onkeydown="if(event.key==='Enter'||event.key===' ')toggleFaq(this)" tabindex="0" role="button">
+            <div class="faq-question" onclick="toggleFaq(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleFaq(this);}" tabindex="0" role="button" aria-expanded="false">
               <span class="faq-question-text">Where did this come from?</span>
               <span class="faq-icon">+</span>
             </div>
@@ -1171,7 +1204,7 @@ function _renderAboutContent() {
             </div>
           </div>
           <div class="faq-item">
-            <div class="faq-question" onclick="toggleFaq(this)" onkeydown="if(event.key==='Enter'||event.key===' ')toggleFaq(this)" tabindex="0" role="button">
+            <div class="faq-question" onclick="toggleFaq(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleFaq(this);}" tabindex="0" role="button" aria-expanded="false">
               <span class="faq-question-text">What makes a word an Americanism?</span>
               <span class="faq-icon">+</span>
             </div>
@@ -1180,7 +1213,7 @@ function _renderAboutContent() {
             </div>
           </div>
           <div class="faq-item">
-            <div class="faq-question" onclick="toggleFaq(this)" onkeydown="if(event.key==='Enter'||event.key===' ')toggleFaq(this)" tabindex="0" role="button">
+            <div class="faq-question" onclick="toggleFaq(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleFaq(this);}" tabindex="0" role="button" aria-expanded="false">
               <span class="faq-question-text">Is this meant to criticize America?</span>
               <span class="faq-icon">+</span>
             </div>
@@ -1189,7 +1222,7 @@ function _renderAboutContent() {
             </div>
           </div>
           <div class="faq-item">
-            <div class="faq-question" onclick="toggleFaq(this)" onkeydown="if(event.key==='Enter'||event.key===' ')toggleFaq(this)" tabindex="0" role="button">
+            <div class="faq-question" onclick="toggleFaq(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleFaq(this);}" tabindex="0" role="button" aria-expanded="false">
               <span class="faq-question-text">What are the most common categories?</span>
               <span class="faq-icon">+</span>
             </div>
@@ -1200,7 +1233,7 @@ function _renderAboutContent() {
             </div>
           </div>
           <div class="faq-item">
-            <div class="faq-question" onclick="toggleFaq(this)" onkeydown="if(event.key==='Enter'||event.key===' ')toggleFaq(this)" tabindex="0" role="button">
+            <div class="faq-question" onclick="toggleFaq(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleFaq(this);}" tabindex="0" role="button" aria-expanded="false">
               <span class="faq-question-text">Am I more American if I score higher?</span>
               <span class="faq-icon">+</span>
             </div>
@@ -1229,6 +1262,7 @@ function toggleFaq(el) {
       });
     });
     icon.classList.remove('open');
+    el.setAttribute('aria-expanded', 'false');
   } else {
     // Expand: measure natural height, animate to it
     answer.style.height = '0px';
@@ -1240,6 +1274,7 @@ function toggleFaq(el) {
       });
     });
     icon.classList.add('open');
+    el.setAttribute('aria-expanded', 'true');
   }
 }
 
@@ -1248,10 +1283,10 @@ function renderGame() {
   document.getElementById('app').innerHTML = `
     <div class="game-screen">
       <div class="game-header">
-        <span class="game-logo" onclick="goHome()" style="cursor:pointer;">Americanisms</span>
+        <button class="game-logo" onclick="goHome()" aria-label="Americanisms — return to home">Americanisms</button>
         <div class="game-meta">
-          <span class="progress-text">Card ${currentIndex+1} of 8</span>
-          <span class="score-badge">${score} correct</span>
+          <span class="progress-text" aria-live="polite" aria-atomic="true">Card ${currentIndex+1} of 8</span>
+          <span class="score-badge" aria-live="polite" aria-atomic="true">${score} correct</span>
         </div>
       </div>
       <div class="card-stage" id="card-stage">
@@ -1259,15 +1294,16 @@ function renderGame() {
         <div class="play-card card-rise" id="play-card">
           <div class="card-inner">
             <div class="card-illustration">${illustrationHTML(card)}</div>
-            <div class="attempt-dots" id="dots">${dotsHTML(attempts)}</div>
+            <div class="attempt-dots" id="dots" role="status" aria-label="${attempts} of 3 attempts used">${dotsHTML(attempts)}</div>
           </div>
         </div>
       </div>
       <div class="guess-area">
         <div class="guess-input-row">
           <div class="guess-input-group">
-            <input class="guess-input" id="guess-input" type="text" placeholder="What's this Americanism?" autocomplete="off" autocorrect="off" spellcheck="false" autofocus>
-            <p class="feedback-msg" id="feedback"></p>
+            <label for="guess-input" class="sr-only">Your answer</label>
+            <input class="guess-input" id="guess-input" type="text" placeholder="What's this Americanism?" autocomplete="off" autocorrect="off" spellcheck="false" autofocus aria-describedby="feedback">
+            <p class="feedback-msg" id="feedback" role="alert" aria-live="assertive"></p>
           </div>
           <button class="btn-primary" onclick="submitGuess()">Guess</button>
         </div>
@@ -1286,10 +1322,13 @@ function renderReveal(correct) {
   const card = session[currentIndex];
   const overlay = document.createElement('div');
   overlay.className = 'reveal-overlay';
+  overlay.setAttribute('role', 'dialog');
+  overlay.setAttribute('aria-modal', 'true');
+  overlay.setAttribute('aria-labelledby', 'reveal-idiom-heading');
   overlay.innerHTML = `
     <div class="reveal-content">
       <p class="reveal-status">${correct ? 'Correct!' : 'The answer was'}</p>
-      <h2 class="reveal-idiom">${card.idiom}</h2>
+      <h2 class="reveal-idiom" id="reveal-idiom-heading">${card.idiom}</h2>
       <span class="reveal-category-pill">${card.category}</span>
       <p class="reveal-insight">${card.category_description}</p>
       <button class="btn-primary" onclick="nextCard()">${currentIndex < 7 ? 'Next card' : 'See results'}</button>
@@ -1314,9 +1353,9 @@ function renderEnd() {
 
   const rows = results.map((r, i) => `
     <div class="result-row" style="animation-delay:${0.8 + i * 0.09}s">
-      <div class="result-icon">${r.correct
-          ? `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 1C5.92487 1 1 5.92487 1 12C1 18.0751 5.92487 23 12 23C18.0751 23 23 18.0751 23 12C23 5.92487 18.0751 1 12 1ZM17.2071 9.70711C17.5976 9.31658 17.5976 8.68342 17.2071 8.29289C16.8166 7.90237 16.1834 7.90237 15.7929 8.29289L10.5 13.5858L8.20711 11.2929C7.81658 10.9024 7.18342 10.9024 6.79289 11.2929C6.40237 11.6834 6.40237 12.3166 6.79289 12.7071L9.79289 15.7071C10.1834 16.0976 10.8166 16.0976 11.2071 15.7071L17.2071 9.70711Z" fill="#222222"/></svg>`
-          : `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17 7L7 17M7 7L17 17" stroke="#CECABD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+      <div class="result-icon" aria-label="${r.correct ? 'Correct' : 'Incorrect'}" role="img">${r.correct
+          ? `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 1C5.92487 1 1 5.92487 1 12C1 18.0751 5.92487 23 12 23C18.0751 23 23 18.0751 23 12C23 5.92487 18.0751 1 12 1ZM17.2071 9.70711C17.5976 9.31658 17.5976 8.68342 17.2071 8.29289C16.8166 7.90237 16.1834 7.90237 15.7929 8.29289L10.5 13.5858L8.20711 11.2929C7.81658 10.9024 7.18342 10.9024 6.79289 11.2929C6.40237 11.6834 6.40237 12.3166 6.79289 12.7071L9.79289 15.7071C10.1834 16.0976 10.8166 16.0976 11.2071 15.7071L17.2071 9.70711Z" fill="#222222"/></svg>`
+          : `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M17 7L7 17M7 7L17 17" stroke="#CECABD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`
         }</div>
       <span class="result-idiom">${r.idiom}</span>
       <span class="result-category-pill">${r.category}</span>
@@ -1325,7 +1364,7 @@ function renderEnd() {
 
   document.getElementById('app').innerHTML = `
     <div class="end-screen">
-      <div class="end-score-section">
+      <div class="end-score-section" aria-live="polite" aria-atomic="true">
         <p class="end-score-label">You scored</p>
         <div class="end-score-number">
           <span class="end-digit-slot" id="end-digit"></span><span class="end-score-denom">/8</span>
@@ -1337,7 +1376,7 @@ function renderEnd() {
 
       <div class="end-actions">
         <button class="btn-primary" onclick="shareScore()">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right:8px; flex-shrink:0;"><path d="M9 1.5V12M9 1.5L5.5 5M9 1.5L12.5 5M2.5 13V15C2.5 15.8284 3.17157 16.5 4 16.5H14C14.8284 16.5 15.5 15.8284 15.5 15V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="margin-right:8px; flex-shrink:0;"><path d="M9 1.5V12M9 1.5L5.5 5M9 1.5L12.5 5M2.5 13V15C2.5 15.8284 3.17157 16.5 4 16.5H14C14.8284 16.5 15.5 15.8284 15.5 15V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           Challenge a friend
         </button>
         <button class="btn-secondary" onclick="startGame()">Play again</button>
@@ -1345,7 +1384,7 @@ function renderEnd() {
     </div>
   `;
 
-  if (score >= 4) launchFireworks();
+  if (score >= 4 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) launchFireworks();
 
   // ── Score count-up animation ──
   const digitEl = document.getElementById('end-digit');
@@ -1399,7 +1438,19 @@ function submitGuess() {
   if (phase !== 'playing') return;
   const input = document.getElementById('guess-input');
   const guess = input.value.trim();
-  if (!guess) return;
+  if (!guess) {
+    const fb = document.getElementById('feedback');
+    fb.textContent = 'Type a guess first';
+    fb.className = 'feedback-msg error';
+    input.classList.add('row-error');
+    input.focus();
+    input.addEventListener('input', () => {
+      fb.className = 'feedback-msg';
+      fb.textContent = '';
+      input.classList.remove('row-error');
+    }, { once: true });
+    return;
+  }
 
   const card = session[currentIndex];
   attempts++;
@@ -1407,12 +1458,16 @@ function submitGuess() {
   if (isCorrect(guess, card.idiom)) {
     score++;
     results.push({ idiom: card.idiom, category: card.category, correct: true });
-    document.getElementById('dots').innerHTML = dotsHTML(attempts);
+    const dotsEl1 = document.getElementById('dots');
+    dotsEl1.innerHTML = dotsHTML(attempts);
+    dotsEl1.setAttribute('aria-label', `${attempts} of 3 attempts used`);
     phase = 'reveal';
     setTimeout(() => renderReveal(true), 200);
   } else if (attempts >= 3) {
     results.push({ idiom: card.idiom, category: card.category, correct: false });
-    document.getElementById('dots').innerHTML = dotsHTML(attempts);
+    const dotsEl2 = document.getElementById('dots');
+    dotsEl2.innerHTML = dotsHTML(attempts);
+    dotsEl2.setAttribute('aria-label', `${attempts} of 3 attempts used`);
     const pcFinal = document.getElementById('play-card');
     pcFinal.classList.remove('card-rise');
     pcFinal.classList.add('shake');
@@ -1421,14 +1476,16 @@ function submitGuess() {
   } else {
     const remaining = 3 - attempts;
     const fb = document.getElementById('feedback');
-    fb.textContent = `Not quite — ${remaining} ${remaining===1?'guess':'guesses'} left.`;
+    fb.textContent = `Not quite — ${remaining} ${remaining===1?'guess':'guesses'} left`;
     fb.className = 'feedback-msg error';
     document.getElementById('guess-input')?.classList.add('row-error');
     const pc = document.getElementById('play-card');
     pc.classList.remove('card-rise'); // prevent restart when shake ends
     pc.classList.add('shake');
     pc.addEventListener('animationend', () => pc.classList.remove('shake'), {once:true});
-    document.getElementById('dots').innerHTML = dotsHTML(attempts);
+    const dotsEl3 = document.getElementById('dots');
+    dotsEl3.innerHTML = dotsHTML(attempts);
+    dotsEl3.setAttribute('aria-label', `${attempts} of 3 attempts used`);
     input.value = '';
     input.focus();
     // Clear helper text as soon as the user starts typing again
