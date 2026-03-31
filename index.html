@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Americanisms</title>
+  <!-- Times New Roman is a system font — no external load needed -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── FOCUS STATES (WCAG 2.2 compliant) ──
+       :focus-visible targets keyboard/assistive-tech navigation only — not mouse clicks.
+       outline-offset: 2px creates the required gap between element and ring.
+       2px solid #222 on white = 15.3:1 contrast ratio, well above the 3:1 minimum. */
+    :focus { outline: none; }
+    :focus-visible {
+      outline: 2px solid var(--ink);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+
+    /* Per-element radius overrides so the ring hugs the shape */
+    button:focus-visible,
+    .btn-primary:focus-visible,
+    .btn-secondary:focus-visible,
+    .btn-guess:focus-visible,
+    .btn-primary:focus-visible,
+    .btn-secondary:focus-visible {
+      border-radius: 100px;
+    }
+
+    .guess-input:focus-visible {
+      outline-offset: 4px;
+      border-radius: 0;
+    }
+
+    .faq-question:focus-visible {
+      border-radius: 4px;
+    }
+
+    .about-back:focus-visible {
+      border-radius: 4px;
+    }
+
+    :root {
+      /* Design system — Parker Simon */
+      --bg:           #FFFFFF;  /* white */
+      --card-bg:      #FFFFFF;
+      --text-primary: #222222;  /* us.black */
+      --text-secondary:#555550;
+      --text-muted:   #CECABD;  /* us.gray.one */
+      --ink:          #222222;  /* us.black */
+      --blue:         #0263DE;  /* us.blue */
+      --red:          #D70200;  /* us.red */
+      --gold:         #B8923F;  /* us.gold */
+      --gray-one:     #CECABD;  /* us.gray.one */
+      --gray-two:     #A19E99;  /* us.gray.two */
+      --success:      #0263DE;
+      --error:        #D70200;
+      --border:       #CECABD;  /* us.gray.one */
+      --shadow-sm:    0 2px 8px rgba(0,0,0,0.06);
+      --shadow-md:    0 8px 32px rgba(0,0,0,0.09);
+      --shadow-lg:    0 16px 48px rgba(0,0,0,0.12);
+      --radius:       14px;
+      --card-w:       313px;
+      --card-h:       448px;
+      --banner-h:     46px;
+      --serif:        'Times New Roman', Times, Georgia, serif;
+      --mono:         'IBM Plex Mono', monospace;
+      --tracking:     -0.03em;
+      --lh-body:      24px;  /* body.primary line-height */
+    }
+
+    html, body {
+      height: 100%;
+      font-family: var(--serif);
+      line-height: var(--lh-body);
+      background: var(--bg);
+      color: var(--text-primary);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── GOVERNMENT BANNER ── */
+    #gov-banner {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: #222222;
+      border-bottom: 0.5px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 9999;
+    }
+
+    .banner-text {
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 400;
+      color: #fff;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+    }
+
+    #app {
+      min-height: 100vh;
+      padding-top: calc(var(--banner-h) + 40px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding-left: 16px;
+      padding-right: 16px;
+      padding-bottom: 40px;
+      transition: opacity 0.224s ease;
+    }
+
+    /* ── LANDING ── */
+    .landing {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .landing-wordmark {
+      font-family: var(--serif);
+      font-size: clamp(56px, 12vw, 96px);
+      font-weight: 400;
+      color: var(--ink);
+      letter-spacing: var(--tracking);
+      line-height: 1;
+      margin-bottom: 22px;
+    }
+
+    .landing-tagline {
+      font-family: var(--serif);
+      font-size: 20px;
+      line-height: 1.4;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+      max-width: 560px;
+      white-space: nowrap;
+      margin: 0 auto 56px;
+    }
+
+    .card-stack {
+      position: relative;
+      width: var(--card-w);
+      height: var(--card-h);
+      margin: 0 auto 56px;
+      cursor: pointer;
+    }
+
+    .stack-card {
+      position: absolute;
+      width: var(--card-w);
+      height: var(--card-h);
+      border-radius: 16px;
+      top: 0; left: 0;
+      transition: transform 0.35s cubic-bezier(0.34, 1.4, 0.64, 1);
+    }
+
+    .stack-card-back {
+      background-color: var(--border);
+      background-image:
+        url('illustrations/americanisms-seal.png'),
+        repeating-linear-gradient(
+          45deg,
+          rgba(255,255,255,0.06) 0, rgba(255,255,255,0.06) 1px,
+          transparent 0, transparent 5px
+        ),
+        repeating-linear-gradient(
+          -45deg,
+          rgba(0,0,0,0.025) 0, rgba(0,0,0,0.025) 1px,
+          transparent 0, transparent 5px
+        );
+      background-repeat: no-repeat, repeat, repeat;
+      background-position: center, 0 0, 0 0;
+      background-size: 62%, 5px 5px, 5px 5px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid rgba(0,0,0,0.09);
+    }
+
+    .stack-card-back::after {
+      content: '';
+      position: absolute;
+      inset: 12px;
+      border: 1px solid rgba(0,0,0,0.07);
+      border-radius: 10px;
+    }
+
+    .s4 { transform: rotate(-5deg) translate(-8px, 10px); z-index: 1; }
+    .s3 { transform: rotate(-2.5deg) translate(-4px, 5px); z-index: 2; }
+    .s2 { transform: rotate(2deg) translate(4px, 3px);  z-index: 3; }
+    .s1 { transform: rotate(0.5deg) translate(0, 0);    z-index: 4; }
+
+    .card-stack:hover .s4 { transform: rotate(-9deg) translate(-16px, 18px); }
+    .card-stack:hover .s3 { transform: rotate(-4deg) translate(-8px, 10px); }
+    .card-stack:hover .s2 { transform: rotate(4deg)  translate(8px, 6px); }
+    .card-stack:hover .s1 { transform: rotate(1deg)  translate(2px, 0); }
+
+    .card-stack:active .s4 { transform: rotate(-11deg) translate(-20px, 22px); }
+    .card-stack:active .s3 { transform: rotate(-5deg)  translate(-10px, 12px); }
+    .card-stack:active .s2 { transform: rotate(5deg)   translate(10px, 8px); }
+    .card-stack:active .s1 { transform: rotate(1.5deg) translate(3px, 1px); }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: var(--ink);
+      color: #fff;
+      font-family: var(--serif);
+      font-size: 20px;
+      font-weight: 400;
+      padding: 12px 24px;
+      border-radius: 100px;
+      border: none;
+      cursor: pointer;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.14); }
+    .btn-primary:active { transform: translateY(0); box-shadow: none; }
+
+    /* ── GAME SCREEN ── */
+    .game-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .game-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 48px;
+    }
+
+    .game-logo {
+      font-family: var(--serif);
+      font-size: 20px;
+      font-weight: 400;
+      color: var(--ink);
+      letter-spacing: var(--tracking);
+      transition: opacity 0.15s ease;
+    }
+    .game-logo:hover { opacity: 0.5; }
+
+    .game-meta { display: flex; gap: 16px; align-items: center; }
+    .progress-text { font-family: var(--serif); font-size: 16px; color: var(--text-primary); letter-spacing: -0.02em; }
+    .score-badge {
+      font-family: var(--serif);
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--ink);
+      background: transparent;
+      border: 1px solid var(--ink);
+      padding: 4px 8px;
+      border-radius: 100px;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+      line-height: normal;
+    }
+
+    /* Card stage — holds peek stack + active card */
+    .card-stage {
+      position: relative;
+      width: var(--card-w);
+      height: var(--card-h);
+      margin-bottom: 56px;
+      flex-shrink: 0;
+    }
+
+    /* Peek cards — white face-up, matching the active card aesthetic */
+    .peek-card {
+      position: absolute;
+      top: 0; left: 0;
+      width: var(--card-w);
+      height: var(--card-h);
+      border-radius: 16px;
+      background: #fff;
+      border: 1px solid var(--border);
+      box-shadow:
+        0px 6px 12px rgba(0,0,0,0.07),
+        0px 22px 22px rgba(0,0,0,0.05);
+      transition: transform 0.4s cubic-bezier(0.34, 1.2, 0.64, 1);
+      padding: 10px;
+    }
+
+    .peek-card::after {
+      content: '';
+      position: absolute;
+      inset: 10px;
+      border: 1px solid rgba(34,34,34,0.10);
+      border-radius: 12px;
+    }
+
+    .peek-1 { transform: rotate(-2.5deg) translate(-7px, 7px); z-index: 1; }
+    .peek-2 { transform: rotate(-4.5deg) translate(-13px, 13px); z-index: 0; }
+
+    .play-card {
+      position: absolute;
+      top: 0; left: 0;
+      width: var(--card-w);
+      height: var(--card-h);
+      border-radius: 16px;
+      background: #fff;
+      box-shadow:
+        0px 6px 12px rgba(0,0,0,0.10),
+        0px 22px 22px rgba(0,0,0,0.09),
+        0px 50px 30px rgba(0,0,0,0.05),
+        0px 88px 35px rgba(0,0,0,0.01);
+      border: 1px solid var(--border);
+      padding: 10px;
+      z-index: 2;
+    }
+
+    .play-card.shake { animation: shake 0.45s ease; }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-7px) rotate(-0.5deg); }
+      40% { transform: translateX(7px) rotate(0.5deg); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(4px); }
+    }
+
+    /* Card rises up from the stack on entry.
+       `both` is critical — applies the 0% keyframe BEFORE the animation starts,
+       preventing a single-frame flash at full opacity. */
+    .card-rise {
+      animation: cardRise 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
+      will-change: transform, opacity;
+    }
+
+    @keyframes cardRise {
+      0%   { transform: rotate(-2.5deg) translate(-7px, 10px) scale(0.95); opacity: 0; }
+      35%  { opacity: 1; }
+      68%  { transform: rotate(0.6deg) translate(1px, -3px) scale(1.018); }
+      84%  { transform: rotate(-0.15deg) translate(-0.5px, 0.5px) scale(0.999); }
+      100% { transform: rotate(0deg) translate(0, 0) scale(1); opacity: 1; }
+    }
+
+    /* Card fades out when dismissed */
+    .card-fade-out {
+      animation: cardFadeOut 0.26s cubic-bezier(0.4, 0, 1, 1) both;
+      pointer-events: none;
+      will-change: transform, opacity;
+    }
+
+    @keyframes cardFadeOut {
+      0%   { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(0.97); }
+    }
+
+    /* Overlay fade out — opacity only, no backdrop-filter animation (causes flash) */
+    .reveal-overlay.dismissing {
+      animation: overlayOut 0.38s ease both;
+      pointer-events: none;
+    }
+
+    @keyframes overlayOut {
+      from { opacity: 1; }
+      to   { opacity: 0; }
+    }
+
+    /* Inner card frame */
+    .card-inner {
+      width: 100%; height: 100%;
+      border: 1px solid rgba(34,34,34,0.13);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+      padding: 32px 20px;
+      overflow: hidden;
+    }
+
+    .card-illustration {
+      flex: 1;
+      width: 100%;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+
+    .card-illustration img {
+      max-width: 100%; max-height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .card-illustration .placeholder {
+      width: 100%; height: 100%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 10px;
+    }
+
+    .placeholder-label {
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 1.5px; text-transform: uppercase; opacity: 0.35;
+    }
+
+    .attempt-dots { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+    .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); transition: background 0.2s ease; }
+    .dot.used { background: var(--ink); }
+
+    .guess-area { width: 100%; display: flex; flex-direction: column; align-items: center; }
+
+    /* Input + Guess button row — button sits alongside the input+feedback group */
+    .guess-input-row {
+      display: flex;
+      width: auto;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    /* Input and its helper text stacked — keeps feedback left-aligned under the field */
+    .guess-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .guess-input {
+      flex: none;
+      width: 256px;
+      font-family: var(--serif);
+      font-size: 20px;
+      letter-spacing: -0.02em;
+      padding: 4px;
+      height: 48px;
+      border: none;
+      border-bottom: 1px solid var(--gray-two);
+      border-radius: 0;
+      background: #fff;
+      color: var(--text-primary);
+      outline: none;
+      overflow: hidden;
+      transition: border-color 0.32s ease;
+    }
+
+    .guess-input:focus { border-color: var(--ink); }
+    .guess-input.row-error { border-color: var(--red); }
+    .guess-input::placeholder { color: var(--gray-two); }
+
+    .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    .feedback-msg {
+      font-family: var(--serif);
+      font-size: 16px;
+      letter-spacing: -0.02em;
+      color: transparent;
+      min-height: 20px;
+      padding: 0 4px;
+      text-align: left;
+      width: 256px;
+      transition: color 0.18s ease;
+    }
+    .feedback-msg.error { color: var(--red); }
+
+    /* ── REVEAL OVERLAY ── */
+    .reveal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(255,255,255,0.8);
+      backdrop-filter: blur(6.5px);
+      -webkit-backdrop-filter: blur(6.5px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 40px 24px; z-index: 100;
+      animation: fadeIn 0.25s ease both;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .reveal-content {
+      display: flex; flex-direction: column;
+      align-items: center; text-align: center;
+      max-width: 431px; width: 100%;
+      animation: revealRise 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    @keyframes revealRise {
+      from { transform: translateY(18px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+
+    .reveal-status {
+      font-family: var(--serif);
+      font-size: 20px; font-weight: 400;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+
+    .reveal-idiom {
+      font-family: var(--serif);
+      font-size: clamp(44px, 9vw, 64px); font-weight: 400;
+      letter-spacing: -0.02em;
+      color: var(--ink); line-height: 1;
+      margin-bottom: 16px;
+    }
+
+    .reveal-category-pill {
+      display: inline-flex; align-items: center;
+      border: 0.5px solid var(--ink);
+      border-radius: 100px;
+      padding: 4px 8px;
+      font-family: var(--serif);
+      font-size: 12px; font-weight: 400; line-height: 1;
+      letter-spacing: -0.02em; text-transform: uppercase;
+      color: var(--ink);
+      margin-bottom: 16px;
+    }
+
+    .reveal-insight {
+      font-family: var(--serif);
+      font-size: 20px; line-height: var(--lh-body);
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin-bottom: 40px;
+      max-width: 431px;
+    }
+
+
+    /* ── ABOUT PAGE ── */
+    .about-screen {
+      width: 100%;
+      max-width: 700px;
+      padding: 48px 24px 120px;
+      display: flex;
+      flex-direction: column;
+      gap: 64px;
+    }
+
+    .about-back {
+      font-family: var(--serif);
+      font-size: 20px;
+      font-weight: 400;
+      color: var(--ink);
+      letter-spacing: -0.02em;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: none;
+      background: none;
+      border: none;
+      padding: 0;
+      text-decoration: underline;
+      text-decoration-color: currentColor;
+    }
+    .about-back:hover { color: var(--gray-two); }
+
+    .about-section { display: flex; flex-direction: column; gap: 40px; }
+
+    .about-title {
+      font-family: var(--serif);
+      font-size: clamp(40px, 6vw, 64px);
+      font-weight: 400;
+      color: var(--ink);
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+
+    .about-body {
+      font-family: var(--serif);
+      font-size: 20px;
+      font-weight: 400;
+      color: var(--ink);
+      letter-spacing: -0.02em;
+      line-height: var(--lh-body);
+    }
+
+    .about-divider { width: 100%; height: 0.5px; background: var(--border); }
+
+    .faq-list { display: flex; flex-direction: column; gap: 40px; }
+
+    .faq-item { display: flex; flex-direction: column; }
+
+    .faq-question {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      cursor: pointer;
+    }
+
+    .faq-question-text {
+      font-family: var(--serif);
+      font-size: clamp(22px, 3.5vw, 32px);
+      font-weight: 400;
+      color: var(--ink);
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+
+    .faq-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      flex-shrink: 0;
+      font-size: 28px;
+      color: var(--ink);
+      line-height: 1;
+      transition: transform 0.36s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .faq-icon.open {
+      transform: rotate(45deg);
+    }
+
+    .faq-answer {
+      font-family: var(--serif);
+      font-size: 20px;
+      font-weight: 400;
+      color: var(--ink);
+      letter-spacing: -0.02em;
+      line-height: var(--lh-body);
+      padding-top: 16px;
+      overflow: hidden;
+      height: 0;
+      opacity: 0;
+      transition: height 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+                  opacity 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .faq-answer ul { padding-left: 24px; margin: 0; }
+    .faq-answer li { margin-bottom: 4px; }
+
+    .landing-actions { display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap; }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: transparent;
+      color: var(--ink);
+      font-family: var(--serif);
+      font-size: 20px;
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      padding: 12px 24px;
+      border-radius: 100px;
+      border: 1px solid var(--ink);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .btn-secondary:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    .btn-secondary:active { transform: translateY(0); box-shadow: none; }
+
+    /* ── END SCREEN ── */
+    .end-screen {
+      max-width: 560px; width: 100%;
+      display: flex; flex-direction: column;
+      align-items: center;
+      padding: 60px 24px 80px;
+      position: relative; z-index: 1;
+    }
+
+    #confetti-canvas {
+      position: fixed; inset: 0;
+      width: 100%; height: 100%;
+      pointer-events: none; z-index: 0;
+    }
+
+    /* Score section */
+    .end-score-section {
+      text-align: center;
+      margin-bottom: 52px;
+    }
+
+    .end-score-label {
+      font-family: var(--serif);
+      font-size: 20px; font-weight: 400;
+      color: var(--ink);
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+
+    .end-score-number {
+      font-family: var(--serif);
+      font-size: 96px; font-weight: 400;
+      letter-spacing: -0.03em;
+      color: var(--ink); line-height: 1;
+      margin-bottom: 14px;
+      display: flex; align-items: baseline;
+      justify-content: center;
+    }
+
+    .end-digit-slot {
+      display: inline-block;
+      position: relative;
+      overflow: visible;
+    }
+
+    .end-score-denom {
+      font-family: var(--serif);
+      font-size: 96px; font-weight: 400;
+      letter-spacing: -0.03em;
+      color: var(--ink);
+    }
+
+    @keyframes digitRoll {
+      0%   { opacity: 0; filter: blur(10px); transform: translateY(14px) scale(0.88); }
+      55%  { opacity: 1; filter: blur(0px);  transform: translateY(-3px) scale(1.04); }
+      75%  { transform: translateY(1px) scale(0.99); }
+      100% { opacity: 1; filter: blur(0px);  transform: translateY(0) scale(1); }
+    }
+
+    @keyframes digitRollFinal {
+      0%   { opacity: 0; filter: blur(16px); transform: translateY(18px) scale(0.84); }
+      55%  { opacity: 1; filter: blur(0px);  transform: translateY(-6px) scale(1.08); }
+      75%  { transform: translateY(2px) scale(0.98); }
+      100% { opacity: 1; filter: blur(0px);  transform: translateY(0) scale(1); }
+    }
+
+    .digit-roll {
+      display: inline-block;
+      animation: digitRoll 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .digit-roll-final {
+      display: inline-block;
+      animation: digitRollFinal 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .end-score-tagline {
+      font-family: var(--serif);
+      font-size: 20px; font-weight: 400;
+      color: var(--ink);
+      letter-spacing: -0.02em;
+      font-style: italic;
+      opacity: 0;
+      transition: opacity 0.5s ease 0.1s;
+    }
+    .end-score-tagline.visible { opacity: 1; }
+
+    /* Results list */
+    .end-results {
+      width: 100%; display: flex; flex-direction: column;
+      margin-bottom: 44px;
+    }
+
+    .result-row {
+      display: flex; align-items: center; gap: 16px;
+      padding: 14px 0;
+      border-top: 1px solid rgba(206,202,189,0.5);
+      opacity: 0;
+      animation: fadeInRow 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .result-row:last-child { border-bottom: 1px solid rgba(206,202,189,0.5); }
+
+    @keyframes fadeInRow {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    .result-icon {
+      width: 24px; height: 24px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .result-idiom {
+      font-family: var(--serif); font-size: 20px;
+      letter-spacing: -0.02em; color: var(--text-primary);
+      flex: 1;
+    }
+
+    .result-category-pill {
+      display: inline-flex; align-items: center;
+      border: 0.5px solid var(--ink);
+      border-radius: 100px;
+      padding: 4px 8px;
+      font-family: var(--serif);
+      font-size: 12px; font-weight: 400; line-height: 1;
+      letter-spacing: -0.02em; text-transform: uppercase;
+      color: var(--ink);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* End buttons */
+    .end-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+
+    /* Share toast */
+    .share-toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: #1A1714; color: #fff;
+      font-size: 13px; font-weight: 500;
+      padding: 10px 20px; border-radius: 100px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s ease;
+      z-index: 999;
+    }
+    .share-toast.show { opacity: 1; }
+
+    /* Category colors */
+    .cat-animal    { background: #F5EDD6; }
+    .cat-body      { background: #F5E8E4; }
+    .cat-food      { background: #E8F0E4; }
+    .cat-war       { background: #E4EAF2; }
+    .cat-sport     { background: #F5ECE4; }
+    .cat-transport { background: #E4EDF5; }
+    .cat-tools     { background: #EEEBE6; }
+    .cat-money     { background: #F5F0DE; }
+    .cat-time      { background: #EDE8F5; }
+    .cat-social    { background: #F5E8E0; }
+
+    @media (max-width: 540px) {
+      .landing-tagline { white-space: normal; font-size: 18px; }
+    }
+
+    @media (max-width: 400px) {
+      :root { --card-w: 284px; --card-h: 406px; }
+      .reveal-idiom { font-size: 40px; }
+      .stamp { width: 170px; height: 170px; }
+      .stamp-main { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Government Banner -->
+<div id="gov-banner">
+  <span class="banner-text"><span style="font-size:16px; position:relative; top:1px;">🇺🇸</span>&nbsp;&nbsp;NOT AN OFFICIAL WEBSITE OF THE UNITED STATES GOVERNMENT</span>
+  <div id="banner-tip" style="display:none;">
+    Because it's actually fun.
+  </div>
+</div>
+
+<div id="app"></div>
+<div class="share-toast" id="share-toast">Copied to clipboard ✓</div>
+
+<script>
+// ── BANNER ──
+function toggleBannerTip() {
+  document.getElementById('banner-tip').classList.toggle('visible');
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('#gov-banner')) {
+    document.getElementById('banner-tip').classList.remove('visible');
+  }
+});
+
+// ── DATA ──
+const IDIOMS = [{"idiom":"Dog eat dog world","category":"Animal & Instinct","category_description":"Americans frequently describe people as creatures. Colleagues are wolves. Markets are bulls. Winners are top dogs. We take the bull by the horns and live in a dog eat dog world. Civilization is a setting. Instinct is the operating system.","filename":"dog-eat-dog-world.png"},{"idiom":"Take the bull by the horns","category":"Animal & Instinct","category_description":"Americans frequently describe people as creatures. Colleagues are wolves. Markets are bulls. Winners are top dogs. We take the bull by the horns and live in a dog eat dog world. Civilization is a setting. Instinct is the operating system.","filename":"take-the-bull-by-the-horns.png"},{"idiom":"Top dog","category":"Animal & Instinct","category_description":"Americans frequently describe people as creatures. Colleagues are wolves. Markets are bulls. Winners are top dogs. We take the bull by the horns and live in a dog eat dog world. Civilization is a setting. Instinct is the operating system.","filename":"top-dog.png"},{"idiom":"Wolf in sheep\u2019s clothing","category":"Animal & Instinct","category_description":"Americans frequently describe people as creatures. Colleagues are wolves. Markets are bulls. Winners are top dogs. We take the bull by the horns and live in a dog eat dog world. Civilization is a setting. Instinct is the operating system.","filename":"wolf-in-sheeps-clothing.png"},{"idiom":"Deer in the headlights","category":"Animal & Instinct","category_description":"Americans frequently describe people as creatures. Colleagues are wolves. Markets are bulls. Winners are top dogs. We take the bull by the horns and live in a dog eat dog world. Civilization is a setting. Instinct is the operating system.","filename":"deer-in-the-headlights.png"},{"idiom":"Pain in the neck","category":"Body & Physical Force","category_description":"Life is framed as physical exertion. Ideas have legs. Mistakes hurt. Success costs an arm and a leg. We push through, grind, and gut it out. If it can\u2019t be felt in the body, it\u2019s harder to believe.","filename":"pain-in-the-neck.png"},{"idiom":"Cost an arm and a leg","category":"Body & Physical Force","category_description":"Life is framed as physical exertion. Ideas have legs. Mistakes hurt. Success costs an arm and a leg. We push through, grind, and gut it out. If it can\u2019t be felt in the body, it\u2019s harder to believe.","filename":"cost-an-arm-and-a-leg.png"},{"idiom":"Get a grip","category":"Body & Physical Force","category_description":"Life is framed as physical exertion. Ideas have legs. Mistakes hurt. Success costs an arm and a leg. We push through, grind, and gut it out. If it can\u2019t be felt in the body, it\u2019s harder to believe.","filename":"get-a-grip.png"},{"idiom":"Hot head","category":"Body & Physical Force","category_description":"Life is framed as physical exertion. Ideas have legs. Mistakes hurt. Success costs an arm and a leg. We push through, grind, and gut it out. If it can\u2019t be felt in the body, it\u2019s harder to believe.","filename":"hot-head.png"},{"idiom":"Gut it out","category":"Body & Physical Force","category_description":"Life is framed as physical exertion. Ideas have legs. Mistakes hurt. Success costs an arm and a leg. We push through, grind, and gut it out. If it can\u2019t be felt in the body, it\u2019s harder to believe.","filename":"gut-it-out.png"},{"idiom":"Meat and potatoes","category":"Food, Agriculture & Consumption","category_description":"Value is plated, portioned, and consumed. We focus on the meat and potatoes. Add the icing on the cake. We spill the beans, cook the books, and reap what we sow. Even abstract ideas are served in courses.","filename":"meat-and-potatoes.png"},{"idiom":"Icing on the cake","category":"Food, Agriculture & Consumption","category_description":"Value is plated, portioned, and consumed. We focus on the meat and potatoes. Add the icing on the cake. We spill the beans, cook the books, and reap what we sow. Even abstract ideas are served in courses.","filename":"icing-on-the-cake.png"},{"idiom":"Spill the beans","category":"Food, Agriculture & Consumption","category_description":"Value is plated, portioned, and consumed. We focus on the meat and potatoes. Add the icing on the cake. We spill the beans, cook the books, and reap what we sow. Even abstract ideas are served in courses.","filename":"spill-the-beans.png"},{"idiom":"Low hanging fruit","category":"Food, Agriculture & Consumption","category_description":"Value is plated, portioned, and consumed. We focus on the meat and potatoes. Add the icing on the cake. We spill the beans, cook the books, and reap what we sow. Even abstract ideas are served in courses.","filename":"low-hanging-fruit.png"},{"idiom":"You reap what you sow","category":"Food, Agriculture & Consumption","category_description":"Value is plated, portioned, and consumed. We focus on the meat and potatoes. Add the icing on the cake. We spill the beans, cook the books, and reap what we sow. Even abstract ideas are served in courses.","filename":"you-reap-what-you-sow.png"},{"idiom":"Bite the bullet","category":"War, Weapons & Conflict","category_description":"Everyday choices are cast as combat. We call the shots. We bite the bullet. We take no prisoners. We open a can of whoop ass and fire shots. Conflict is a grammar.","filename":"bite-the-bullet.png"},{"idiom":"Call the shots","category":"War, Weapons & Conflict","category_description":"Everyday choices are cast as combat. We call the shots. We bite the bullet. We take no prisoners. We open a can of whoop ass and fire shots. Conflict is a grammar.","filename":"call-the-shots.png"},{"idiom":"Take no prisoners","category":"War, Weapons & Conflict","category_description":"Everyday choices are cast as combat. We call the shots. We bite the bullet. We take no prisoners. We open a can of whoop ass and fire shots. Conflict is a grammar.","filename":"take-no-prisoners.png"},{"idiom":"Dodge a bullet","category":"War, Weapons & Conflict","category_description":"Everyday choices are cast as combat. We call the shots. We bite the bullet. We take no prisoners. We open a can of whoop ass and fire shots. Conflict is a grammar.","filename":"dodge-a-bullet.png"},{"idiom":"Caught in the crossfire","category":"War, Weapons & Conflict","category_description":"Everyday choices are cast as combat. We call the shots. We bite the bullet. We take no prisoners. We open a can of whoop ass and fire shots. Conflict is a grammar.","filename":"caught-in-the-crossfire.png"},{"idiom":"Ball is in your court","category":"Sport, Games & Risk","category_description":"Life is an arena with a scoreboard. The ball is in your court. You up the ante. You knock it out of the park. You either win big or strike out. If it matters, it\u2019s a game.","filename":"ball-is-in-your-court.png"},{"idiom":"Level playing field","category":"Sport, Games & Risk","category_description":"Life is an arena with a scoreboard. The ball is in your court. You up the ante. You knock it out of the park. You either win big or strike out. If it matters, it\u2019s a game.","filename":"level-playing-field.png"},{"idiom":"Hit it out of the park","category":"Sport, Games & Risk","category_description":"Life is an arena with a scoreboard. The ball is in your court. You up the ante. You knock it out of the park. You either win big or strike out. If it matters, it\u2019s a game.","filename":"hit-it-out-of-the-park.png"},{"idiom":"Out of left field","category":"Sport, Games & Risk","category_description":"Life is an arena with a scoreboard. The ball is in your court. You up the ante. You knock it out of the park. You either win big or strike out. If it matters, it\u2019s a game.","filename":"out-of-left-field.png"},{"idiom":"Up the ante","category":"Sport, Games & Risk","category_description":"Life is an arena with a scoreboard. The ball is in your court. You up the ante. You knock it out of the park. You either win big or strike out. If it matters, it\u2019s a game.","filename":"up-the-ante.png"},{"idiom":"Hit the road","category":"Transportation & Motion","category_description":"Progress is movement. We hit the road. We go off the rails. Success lies down the road. When the rubber meets the road, theory meets traction. Motion is moral. Stagnation is suspect.","filename":"hit-the-road.png"},{"idiom":"Off the rails","category":"Transportation & Motion","category_description":"Progress is movement. We hit the road. We go off the rails. Success lies down the road. When the rubber meets the road, theory meets traction. Motion is moral. Stagnation is suspect.","filename":"off-the-rails.png"},{"idiom":"Down the road","category":"Transportation & Motion","category_description":"Progress is movement. We hit the road. We go off the rails. Success lies down the road. When the rubber meets the road, theory meets traction. Motion is moral. Stagnation is suspect.","filename":"down-the-road.png"},{"idiom":"At a crossroads","category":"Transportation & Motion","category_description":"Progress is movement. We hit the road. We go off the rails. Success lies down the road. When the rubber meets the road, theory meets traction. Motion is moral. Stagnation is suspect.","filename":"at-a-crossroads.png"},{"idiom":"When the rubber meets the road","category":"Transportation & Motion","category_description":"Progress is movement. We hit the road. We go off the rails. Success lies down the road. When the rubber meets the road, theory meets traction. Motion is moral. Stagnation is suspect.","filename":"when-the-rubber-meets-the-road.png"},{"idiom":"Hit the nail on the head","category":"Tools, Work & Mechanics","category_description":"Problems are systems. Solutions are adjustments. We hit the nail on the head. We throw a wrench in the works. We push the envelope and move the needle. If something doesn\u2019t work, we engineer it until it does.","filename":"hit-the-nail-on-the-head.png"},{"idiom":"Throw a wrench in the works","category":"Tools, Work & Mechanics","category_description":"Problems are systems. Solutions are adjustments. We hit the nail on the head. We throw a wrench in the works. We push the envelope and move the needle. If something doesn\u2019t work, we engineer it until it does.","filename":"throw-a-wrench-in-the-works.png"},{"idiom":"Move the needle","category":"Tools, Work & Mechanics","category_description":"Problems are systems. Solutions are adjustments. We hit the nail on the head. We throw a wrench in the works. We push the envelope and move the needle. If something doesn\u2019t work, we engineer it until it does.","filename":"move-the-needle.png"},{"idiom":"Back to the drawing board","category":"Tools, Work & Mechanics","category_description":"Problems are systems. Solutions are adjustments. We hit the nail on the head. We throw a wrench in the works. We push the envelope and move the needle. If something doesn\u2019t work, we engineer it until it does.","filename":"back-to-the-drawing-board.png"},{"idiom":"Well-oiled machine","category":"Tools, Work & Mechanics","category_description":"Problems are systems. Solutions are adjustments. We hit the nail on the head. We throw a wrench in the works. We push the envelope and move the needle. If something doesn\u2019t work, we engineer it until it does.","filename":"well-oiled-machine.png"},{"idiom":"Bang for your buck","category":"Money, Trade & Market Logic","category_description":"Worth is transactional. We want bang for your buck. We seal the deal. We make the big bucks. Time is spent. Effort pays. Everything has a cost. Markets don\u2019t just describe value \u2014 they define it.","filename":"bang-for-your-buck.png"},{"idiom":"Seal the deal","category":"Money, Trade & Market Logic","category_description":"Worth is transactional. We want bang for your buck. We seal the deal. We make the big bucks. Time is spent. Effort pays. Everything has a cost. Markets don\u2019t just describe value \u2014 they define it.","filename":"seal-the-deal.png"},{"idiom":"Make the big bucks","category":"Money, Trade & Market Logic","category_description":"Worth is transactional. We want bang for your buck. We seal the deal. We make the big bucks. Time is spent. Effort pays. Everything has a cost. Markets don\u2019t just describe value \u2014 they define it.","filename":"make-the-big-bucks.png"},{"idiom":"Worth every penny","category":"Money, Trade & Market Logic","category_description":"Worth is transactional. We want bang for your buck. We seal the deal. We make the big bucks. Time is spent. Effort pays. Everything has a cost. Markets don\u2019t just describe value \u2014 they define it.","filename":"worth-every-penny.png"},{"idiom":"Cash cow","category":"Money, Trade & Market Logic","category_description":"Worth is transactional. We want bang for your buck. We seal the deal. We make the big bucks. Time is spent. Effort pays. Everything has a cost. Markets don\u2019t just describe value \u2014 they define it.","filename":"cash-cow.png"},{"idiom":"Crunch time","category":"Time & Sequence","category_description":"Life runs on countdown and momentum. It\u2019s crunch time. In a New York minute. Third time\u2019s the charm. There is always a clock, a deadline, a next round. Urgency is the background noise of ambition.","filename":"crunch-time.png"},{"idiom":"In the nick of time","category":"Time & Sequence","category_description":"Life runs on countdown and momentum. It\u2019s crunch time. In a New York minute. Third time\u2019s the charm. There is always a clock, a deadline, a next round. Urgency is the background noise of ambition.","filename":"in-the-nick-of-time.png"},{"idiom":"Third time\u2019s the charm","category":"Time & Sequence","category_description":"Life runs on countdown and momentum. It\u2019s crunch time. In a New York minute. Third time\u2019s the charm. There is always a clock, a deadline, a next round. Urgency is the background noise of ambition.","filename":"third-times-the-charm.png"},{"idiom":"Down to the wire","category":"Time & Sequence","category_description":"Life runs on countdown and momentum. It\u2019s crunch time. In a New York minute. Third time\u2019s the charm. There is always a clock, a deadline, a next round. Urgency is the background noise of ambition.","filename":"down-to-the-wire.png"},{"idiom":"At the end of the day","category":"Time & Sequence","category_description":"Life runs on countdown and momentum. It\u2019s crunch time. In a New York minute. Third time\u2019s the charm. There is always a clock, a deadline, a next round. Urgency is the background noise of ambition.","filename":"at-the-end-of-the-day.png"},{"idiom":"Elephant in the room","category":"Social Order & Communication","category_description":"Reality is negotiated out loud. The elephant in the room. Word of mouth. Practice what you preach. We read the room, call it like it is, and keep it real. In America, meaning is a performance.","filename":"elephant-in-the-room.png"},{"idiom":"Word of mouth","category":"Social Order & Communication","category_description":"Reality is negotiated out loud. The elephant in the room. Word of mouth. Practice what you preach. We read the room, call it like it is, and keep it real. In America, meaning is a performance.","filename":"word-of-mouth.png"},{"idiom":"Read the room","category":"Social Order & Communication","category_description":"Reality is negotiated out loud. The elephant in the room. Word of mouth. Practice what you preach. We read the room, call it like it is, and keep it real. In America, meaning is a performance.","filename":"read-the-room.png"},{"idiom":"Call it like it is","category":"Social Order & Communication","category_description":"Reality is negotiated out loud. The elephant in the room. Word of mouth. Practice what you preach. We read the room, call it like it is, and keep it real. In America, meaning is a performance.","filename":"call-it-like-it-is.png"},{"idiom":"Keep it real","category":"Social Order & Communication","category_description":"Reality is negotiated out loud. The elephant in the room. Word of mouth. Practice what you preach. We read the room, call it like it is, and keep it real. In America, meaning is a performance.","filename":"keep-it-real.png"}];
+
+const CAT_CLASS = {
+  'Animal & Instinct':'cat-animal','Body & Physical Force':'cat-body',
+  'Food, Agriculture & Consumption':'cat-food','War, Weapons & Conflict':'cat-war',
+  'Sport, Games & Risk':'cat-sport','Transportation & Motion':'cat-transport',
+  'Tools, Work & Mechanics':'cat-tools','Money, Trade & Market Logic':'cat-money',
+  'Time & Sequence':'cat-time','Social Order & Communication':'cat-social',
+};
+
+
+// ── STATE ──
+let session = [], currentIndex = 0, attempts = 0, score = 0, results = [], phase = 'landing';
+
+// ── TRANSITION ──
+function fadeTransition(fn) {
+  const app = document.getElementById('app');
+  app.style.transition = 'opacity 0.224s ease';
+  app.style.opacity = '0';
+  setTimeout(() => {
+    fn();
+    app.style.transition = 'none';
+    app.style.opacity = '0';
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      app.style.transition = 'opacity 0.32s cubic-bezier(0.22, 1, 0.36, 1)';
+      app.style.opacity = '1';
+    }));
+  }, 224);
+}
+
+// ── UTILS ──
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function normalize(s) {
+  return s.toLowerCase().replace(/[''`]/g,"'").replace(/[^a-z0-9\s']/g,'').replace(/\s+/g,' ').trim();
+}
+
+function levenshtein(a, b) {
+  const m = a.length, n = b.length;
+  const dp = Array.from({length: m+1}, (_,i) => [i, ...Array(n).fill(0)]);
+  for (let j = 0; j <= n; j++) dp[0][j] = j;
+  for (let i = 1; i <= m; i++)
+    for (let j = 1; j <= n; j++)
+      dp[i][j] = a[i-1]===b[j-1] ? dp[i-1][j-1] : 1+Math.min(dp[i-1][j-1],dp[i-1][j],dp[i][j-1]);
+  return dp[m][n];
+}
+
+function isCorrect(guess, answer) {
+  const g = normalize(guess), a = normalize(answer);
+  if (!g) return false;
+  if (g === a) return true;
+  const maxDist = Math.max(2, Math.floor(a.length * 0.2));
+  if (levenshtein(g, a) <= maxDist) return true;
+  const strip = s => s.replace(/^(the|a|an) /, '');
+  if (levenshtein(strip(g), strip(a)) <= maxDist) return true;
+  const stops = new Set(['the','and','but','for','that','with','your','have','this','from','they','will']);
+  const keys = a.split(' ').filter(w => w.length > 3 && !stops.has(w));
+  if (keys.length >= 2 && keys.every(w => g.includes(w))) return true;
+  return false;
+}
+
+// ── FIREWORKS ──
+const FW_COLORS = ['#D70200', '#0263DE'];
+let fwRockets = [], fwParticles = [], fwFlashes = [], fwTimers = [], fwRunning = false;
+let fwCanvas = null, fwCtx = null;
+
+function fwInit() {
+  if (fwCanvas) return;
+  fwCanvas = document.createElement('canvas');
+  fwCanvas.id = 'confetti-canvas'; // reuse existing CSS (position:fixed, pointer-events:none)
+  document.body.appendChild(fwCanvas);
+  fwCtx = fwCanvas.getContext('2d');
+  fwCanvas.width  = window.innerWidth;
+  fwCanvas.height = window.innerHeight;
+}
+
+function fwMakeRocket(xFraction) {
+  return {
+    x: fwCanvas.width * xFraction,
+    y: fwCanvas.height,
+    vx: (Math.random() - 0.5) * 1.5,
+    vy: -(13 + Math.random() * 4),
+    trail: [], exploded: false,
+  };
+}
+
+function fwBurst(x, y) {
+  const count = 120 + Math.floor(Math.random() * 30);
+  for (let i = 0; i < count; i++) {
+    const angle = (Math.PI * 2 * i / count) + (Math.random() - 0.5) * 0.3;
+    const speed = 2 + Math.random() * 7;
+    fwParticles.push({
+      x, y,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      color: FW_COLORS[Math.floor(Math.random() * FW_COLORS.length)],
+      alpha: 1, drag: 0.965, gravity: 0.07,
+      w: 1.5 + Math.random() * 2,
+      h: 3.5 + Math.random() * 5,
+      rot: Math.random() * Math.PI * 2,
+      rotV: (Math.random() - 0.5) * 0.3,
+    });
+  }
+}
+
+function fwTick() {
+  fwCtx.clearRect(0, 0, fwCanvas.width, fwCanvas.height);
+
+  // Rockets
+  for (let i = fwRockets.length - 1; i >= 0; i--) {
+    const r = fwRockets[i];
+    if (r.exploded) { fwRockets.splice(i, 1); continue; }
+    r.trail.unshift({ x: r.x, y: r.y });
+    if (r.trail.length > 12) r.trail.pop();
+    r.x += r.vx; r.y += r.vy; r.vy += 0.18;
+    r.trail.forEach((pt, idx) => {
+      const t = 1 - idx / r.trail.length;
+      fwCtx.beginPath();
+      fwCtx.arc(pt.x, pt.y, 2.5 * t, 0, Math.PI * 2);
+      fwCtx.fillStyle = `rgba(255, 210, 80, ${t * 0.85})`;
+      fwCtx.fill();
+    });
+    if (r.vy >= -1.5) {
+      r.exploded = true;
+      fwBurst(r.x, r.y);
+      fwFlashes.push({ x: r.x, y: r.y, radius: 2, alpha: 1 });
+    }
+  }
+
+  // Pop flashes — normal blend so they stay white
+  for (let i = fwFlashes.length - 1; i >= 0; i--) {
+    const f = fwFlashes[i];
+    f.radius += 6; f.alpha *= 0.78;
+    if (f.alpha < 0.02) { fwFlashes.splice(i, 1); continue; }
+    fwCtx.beginPath();
+    fwCtx.arc(f.x, f.y, f.radius, 0, Math.PI * 2);
+    fwCtx.globalAlpha = f.alpha;
+    fwCtx.fillStyle = '#ffffff';
+    fwCtx.fill();
+  }
+  fwCtx.globalAlpha = 1;
+
+  // Particles — additive blending for glow
+  fwCtx.globalCompositeOperation = 'lighter';
+  for (let i = fwParticles.length - 1; i >= 0; i--) {
+    const p = fwParticles[i];
+    p.x += p.vx; p.y += p.vy;
+    p.vx *= p.drag; p.vy = p.vy * p.drag + p.gravity;
+    p.alpha *= 0.982; p.rot += p.rotV;
+    if (p.alpha < 0.015) { fwParticles.splice(i, 1); continue; }
+    fwCtx.save();
+    fwCtx.translate(p.x, p.y);
+    fwCtx.rotate(p.rot);
+    fwCtx.globalAlpha = p.alpha;
+    fwCtx.fillStyle = p.color;
+    fwCtx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+    fwCtx.restore();
+  }
+  fwCtx.globalCompositeOperation = 'source-over';
+  fwCtx.globalAlpha = 1;
+
+  if (fwRockets.length > 0 || fwParticles.length > 0 || fwFlashes.length > 0) {
+    requestAnimationFrame(fwTick);
+  } else {
+    fwRunning = false;
+    if (fwCanvas) { fwCanvas.remove(); fwCanvas = null; fwCtx = null; }
+  }
+}
+
+function launchFireworks() {
+  fwTimers.forEach(clearTimeout);
+  fwRockets = []; fwParticles = []; fwFlashes = []; fwTimers = [];
+  if (fwCanvas) { fwCanvas.remove(); fwCanvas = null; fwCtx = null; }
+  fwInit();
+
+  const positions = [0.2, 0.38, 0.55, 0.72, 0.85];
+  positions.sort(() => Math.random() - 0.5);
+  positions.forEach((x, i) => {
+    fwTimers.push(setTimeout(() => {
+      fwRockets.push(fwMakeRocket(x));
+      if (!fwRunning) { fwRunning = true; fwTick(); }
+    }, i * 480));
+  });
+}
+
+// ── PEEK STACK ──
+function peekHTML(index) {
+  const remaining = 8 - index - 1; // cards left after current
+  const peeks = Math.min(remaining, 2);
+  let html = '';
+  if (peeks >= 2) html += '<div class="peek-card peek-2"></div>';
+  if (peeks >= 1) html += '<div class="peek-card peek-1"></div>';
+  return html;
+}
+
+// ── ILLUSTRATIONS ──
+function illustrationHTML(card) {
+  return `<img src="illustrations/${card.filename}" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+  <div class="placeholder ${CAT_CLASS[card.category]||'cat-animal'}" style="display:none;">
+    <span class="placeholder-label">${card.category}</span>
+  </div>`;
+}
+
+function dotsHTML(used) {
+  return [0,1,2].map(i => {
+    let c = 'dot';
+    if (i < used) c += ' used';
+    return `<span class="${c}"></span>`;
+  }).join('');
+}
+
+// ── SCREENS ──
+function renderLanding() {
+  document.getElementById('app').innerHTML = `
+    <div class="landing">
+      <h1 class="landing-wordmark">Americanisms</h1>
+      <p class="landing-tagline">An interactive game exploring America's favorite words.</p>
+      <div class="card-stack" onclick="startGame()">
+        <div class="stack-card stack-card-back s4"></div>
+        <div class="stack-card stack-card-back s3"></div>
+        <div class="stack-card stack-card-back s2"></div>
+        <div class="stack-card stack-card-back s1"></div>
+      </div>
+      <div class="landing-actions">
+        <button class="btn-primary" onclick="startGame()">Deal the cards</button>
+        <button class="btn-secondary" onclick="renderAbout()">About</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderAbout() {
+  phase = 'about';
+  fadeTransition(() => _renderAboutContent());
+}
+
+function _renderAboutContent() {
+  document.getElementById('app').innerHTML = `
+    <div class="about-screen">
+      <button class="about-back" onclick="goHome()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M19 12H5M5 12L11 6M5 12L11 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Back</button>
+      <div class="about-section">
+        <h1 class="about-title">About Americanisms</h1>
+        <div class="about-body">
+          <p>America has the best words. The strongest words. The most competitive words. Some say the words are incredible.</p>
+          <br>
+          <p>But words do more than decorate speech. They articulate a worldview. They reveal how a culture understands its ideas of things like power, connection, success, and more.</p>
+          <br>
+          <p>Americanisms is an interactive archive of the metaphors that shape the American mind.</p>
+        </div>
+      </div>
+
+      <div class="about-divider"></div>
+
+      <div class="about-section">
+        <h2 class="about-title">FAQs</h2>
+        <div class="faq-list">
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)" onkeydown="if(event.key==='Enter'||event.key===' ')toggleFaq(this)" tabindex="0" role="button">
+              <span class="faq-question-text">Where did this come from?</span>
+              <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-answer">
+              <p>Developed over a decade, Americanisms began as a WhatsApp thread among international friends Parker, Cem, and Vitor, who kept noticing how Americans describe everything as a battle, a game, a machine, or a road trip. After hundreds of entries, they eventually realized they weren't just trading catchphrases; they were deeply exploring a worldview.</p>
+              <br>
+              <p>Americanisms are drawn from everyday speech, media, politics, sports commentary, advertising, and corporate jargon. If you've heard it said unironically in America, it's probably here.</p>
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)" onkeydown="if(event.key==='Enter'||event.key===' ')toggleFaq(this)" tabindex="0" role="button">
+              <span class="faq-question-text">What makes a word an Americanism?</span>
+              <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-answer">
+              <p>Many of these phrases are not uniquely American in origin, but their frequency, tone, and framing in the US reveal something distinct about American thinking: Competition as default. Motion as progress. Conflict as clarity. Markets as morality. Americanisms are less about etymology and more about cultural relevance.</p>
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)" onkeydown="if(event.key==='Enter'||event.key===' ')toggleFaq(this)" tabindex="0" role="button">
+              <span class="faq-question-text">Is this meant to criticize America?</span>
+              <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-answer">
+              <p>Not at all; it's meant to bring awareness to everyday language. All cultures encode their worldview in language. It's been said that language doesn't necessarily describe what's happening, it actually creates what's happening. This project simply makes patterns visible.</p>
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)" onkeydown="if(event.key==='Enter'||event.key===' ')toggleFaq(this)" tabindex="0" role="button">
+              <span class="faq-question-text">What are the most common categories?</span>
+              <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-answer">
+              <p>Across more than 950 idioms, social order and communication dominate, with much of American language focused on how we signal, align, and interpret one another in public (read the room). Next comes physical force, framing life as something to push through and overcome (no pain, no gain). Then instinct and motion take over, casting people in competitive, survival-oriented terms while treating progress as movement forward, off track, or stalled (dog eat dog world, hit the road). Underneath it all, competition and conflict structure meaning, where outcomes are won or lost and decisions carry stakes (call the shots).</p>
+              <br>
+              <p>In short, American language reflects a world managed socially, driven by effort, shaped by movement, and resolved through competition.</p>
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)" onkeydown="if(event.key==='Enter'||event.key===' ')toggleFaq(this)" tabindex="0" role="button">
+              <span class="faq-question-text">Am I more American if I score higher?</span>
+              <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-answer">
+              <p>We make no official determination. But statistically speaking, yes.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function toggleFaq(el) {
+  const answer = el.nextElementSibling;
+  const icon = el.querySelector('.faq-icon');
+  const isOpen = answer.style.height && answer.style.height !== '0px';
+
+  if (isOpen) {
+    // Collapse: pin current height, then animate to 0
+    answer.style.height = answer.scrollHeight + 'px';
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        answer.style.height = '0px';
+        answer.style.opacity = '0';
+      });
+    });
+    icon.classList.remove('open');
+  } else {
+    // Expand: measure natural height, animate to it
+    answer.style.height = '0px';
+    answer.style.opacity = '0';
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        answer.style.height = answer.scrollHeight + 'px';
+        answer.style.opacity = '1';
+      });
+    });
+    icon.classList.add('open');
+  }
+}
+
+function renderGame() {
+  const card = session[currentIndex];
+  document.getElementById('app').innerHTML = `
+    <div class="game-screen">
+      <div class="game-header">
+        <span class="game-logo" onclick="goHome()" style="cursor:pointer;">Americanisms</span>
+        <div class="game-meta">
+          <span class="progress-text">Card ${currentIndex+1} of 8</span>
+          <span class="score-badge">${score} correct</span>
+        </div>
+      </div>
+      <div class="card-stage" id="card-stage">
+        ${peekHTML(currentIndex)}
+        <div class="play-card card-rise" id="play-card">
+          <div class="card-inner">
+            <div class="card-illustration">${illustrationHTML(card)}</div>
+            <div class="attempt-dots" id="dots">${dotsHTML(attempts)}</div>
+          </div>
+        </div>
+      </div>
+      <div class="guess-area">
+        <div class="guess-input-row">
+          <div class="guess-input-group">
+            <input class="guess-input" id="guess-input" type="text" placeholder="What's this Americanism?" autocomplete="off" autocorrect="off" spellcheck="false" autofocus>
+            <p class="feedback-msg" id="feedback"></p>
+          </div>
+          <button class="btn-primary" onclick="submitGuess()">Guess</button>
+        </div>
+      </div>
+    </div>
+  `;
+  const guessInput = document.getElementById('guess-input');
+  guessInput.addEventListener('keydown', e => { if (e.key==='Enter') submitGuess(); });
+  guessInput.focus();
+  // Remove card-rise after it finishes so shake can't re-trigger it
+  const playCard = document.getElementById('play-card');
+  playCard.addEventListener('animationend', () => playCard.classList.remove('card-rise'), { once: true });
+}
+
+function renderReveal(correct) {
+  const card = session[currentIndex];
+  const overlay = document.createElement('div');
+  overlay.className = 'reveal-overlay';
+  overlay.innerHTML = `
+    <div class="reveal-content">
+      <p class="reveal-status">${correct ? 'Correct!' : 'The answer was'}</p>
+      <h2 class="reveal-idiom">${card.idiom}</h2>
+      <span class="reveal-category-pill">${card.category}</span>
+      <p class="reveal-insight">${card.category_description}</p>
+      <button class="btn-primary" onclick="nextCard()">${currentIndex < 7 ? 'Next card' : 'See results'}</button>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  overlay.querySelector('button').focus();
+}
+
+function renderEnd() {
+  const taglines = {
+    8: 'Native speaker.',
+    7: 'You\'ve been listening closely.',
+    6: 'You know how Americans think.',
+    5: 'More American than you might admit.',
+    4: 'Getting the hang of it.',
+    3: 'A promising start.',
+    2: 'The education begins here.',
+    1: 'One down. Forty-nine to go.',
+    0: 'Truly, a clean slate.',
+  };
+
+  const rows = results.map((r, i) => `
+    <div class="result-row" style="animation-delay:${0.8 + i * 0.09}s">
+      <div class="result-icon">${r.correct
+          ? `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 1C5.92487 1 1 5.92487 1 12C1 18.0751 5.92487 23 12 23C18.0751 23 23 18.0751 23 12C23 5.92487 18.0751 1 12 1ZM17.2071 9.70711C17.5976 9.31658 17.5976 8.68342 17.2071 8.29289C16.8166 7.90237 16.1834 7.90237 15.7929 8.29289L10.5 13.5858L8.20711 11.2929C7.81658 10.9024 7.18342 10.9024 6.79289 11.2929C6.40237 11.6834 6.40237 12.3166 6.79289 12.7071L9.79289 15.7071C10.1834 16.0976 10.8166 16.0976 11.2071 15.7071L17.2071 9.70711Z" fill="#222222"/></svg>`
+          : `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17 7L7 17M7 7L17 17" stroke="#CECABD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+        }</div>
+      <span class="result-idiom">${r.idiom}</span>
+      <span class="result-category-pill">${r.category}</span>
+    </div>
+  `).join('');
+
+  document.getElementById('app').innerHTML = `
+    <div class="end-screen">
+      <div class="end-score-section">
+        <p class="end-score-label">You scored</p>
+        <div class="end-score-number">
+          <span class="end-digit-slot" id="end-digit"></span><span class="end-score-denom">/8</span>
+        </div>
+        <p class="end-score-tagline" id="end-tagline">${taglines[score] ?? 'The education begins here.'}</p>
+      </div>
+
+      <div class="end-results">${rows}</div>
+
+      <div class="end-actions">
+        <button class="btn-primary" onclick="shareScore()">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right:8px; flex-shrink:0;"><path d="M9 1.5V12M9 1.5L5.5 5M9 1.5L12.5 5M2.5 13V15C2.5 15.8284 3.17157 16.5 4 16.5H14C14.8284 16.5 15.5 15.8284 15.5 15V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Challenge a friend
+        </button>
+        <button class="btn-secondary" onclick="startGame()">Play again</button>
+      </div>
+    </div>
+  `;
+
+  if (score >= 4) launchFireworks();
+
+  // ── Score count-up animation ──
+  const digitEl = document.getElementById('end-digit');
+  const taglineEl = document.getElementById('end-tagline');
+
+  function getCountDelay(step, total) {
+    const t = step / total;
+    const eased = t * t;
+    return 80 + eased * (340 - 80);
+  }
+
+  function rollDigit(el, value, isFinal) {
+    el.innerHTML = '';
+    const span = document.createElement('span');
+    span.className = isFinal ? 'digit-roll-final' : 'digit-roll';
+    span.textContent = value;
+    el.appendChild(span);
+  }
+
+  if (score === 0) {
+    rollDigit(digitEl, 0, true);
+    setTimeout(() => taglineEl.classList.add('visible'), 420);
+  } else {
+    let current = 0;
+    rollDigit(digitEl, 0, false);
+    const tick = () => {
+      current++;
+      const isFinal = current === score;
+      rollDigit(digitEl, current, isFinal);
+      if (!isFinal) {
+        setTimeout(tick, getCountDelay(current, score));
+      } else {
+        setTimeout(() => taglineEl.classList.add('visible'), 420);
+      }
+    };
+    setTimeout(tick, getCountDelay(0, score));
+  }
+}
+
+// ── ACTIONS ──
+function startGame() {
+  const rest = shuffle(IDIOMS.filter(c => c.filename !== 'bite-the-bullet.png')).slice(0, 7);
+  const preview = IDIOMS.find(c => c.filename === 'bite-the-bullet.png');
+  session = preview ? [preview, ...rest] : rest;
+  currentIndex = 0; attempts = 0; score = 0; results = [];
+  phase = 'playing';
+  fadeTransition(() => renderGame());
+}
+
+function submitGuess() {
+  if (phase !== 'playing') return;
+  const input = document.getElementById('guess-input');
+  const guess = input.value.trim();
+  if (!guess) return;
+
+  const card = session[currentIndex];
+  attempts++;
+
+  if (isCorrect(guess, card.idiom)) {
+    score++;
+    results.push({ idiom: card.idiom, category: card.category, correct: true });
+    document.getElementById('dots').innerHTML = dotsHTML(attempts);
+    phase = 'reveal';
+    setTimeout(() => renderReveal(true), 200);
+  } else if (attempts >= 3) {
+    results.push({ idiom: card.idiom, category: card.category, correct: false });
+    document.getElementById('dots').innerHTML = dotsHTML(attempts);
+    const pcFinal = document.getElementById('play-card');
+    pcFinal.classList.remove('card-rise');
+    pcFinal.classList.add('shake');
+    phase = 'reveal';
+    setTimeout(() => renderReveal(false), 500);
+  } else {
+    const remaining = 3 - attempts;
+    const fb = document.getElementById('feedback');
+    fb.textContent = `Not quite — ${remaining} ${remaining===1?'guess':'guesses'} left.`;
+    fb.className = 'feedback-msg error';
+    document.getElementById('guess-input')?.classList.add('row-error');
+    const pc = document.getElementById('play-card');
+    pc.classList.remove('card-rise'); // prevent restart when shake ends
+    pc.classList.add('shake');
+    pc.addEventListener('animationend', () => pc.classList.remove('shake'), {once:true});
+    document.getElementById('dots').innerHTML = dotsHTML(attempts);
+    input.value = '';
+    input.focus();
+    // Clear helper text as soon as the user starts typing again
+    input.addEventListener('input', () => {
+      fb.className = 'feedback-msg';
+      fb.textContent = '';
+      input.classList.remove('row-error');
+    }, { once: true });
+  }
+}
+
+function nextCard() {
+  const overlay = document.querySelector('.reveal-overlay');
+
+  const throwAndAdvance = () => {
+    const activeCard = document.getElementById('play-card');
+    if (activeCard) {
+      activeCard.classList.add('card-fade-out');
+      setTimeout(() => {
+        currentIndex++;
+        attempts = 0;
+        if (currentIndex >= 8) { phase = 'end'; fadeTransition(() => renderEnd()); }
+        else { phase = 'playing'; renderGame(); }
+      }, 240);
+    } else {
+      currentIndex++;
+      attempts = 0;
+      if (currentIndex >= 8) { phase = 'end'; fadeTransition(() => renderEnd()); }
+      else { phase = 'playing'; renderGame(); }
+    }
+  };
+
+  if (overlay) {
+    // Fade the overlay out gracefully, then throw the card
+    overlay.classList.add('dismissing');
+    setTimeout(() => {
+      overlay.remove();
+      throwAndAdvance();
+    }, 360);
+  } else {
+    throwAndAdvance();
+  }
+}
+
+function goHome() {
+  phase = 'landing';
+  fadeTransition(() => renderLanding());
+}
+
+function shareScore() {
+  const msgs = ['🇺🇸','🦅','⭐'];
+  const emoji = msgs[Math.floor(Math.random()*msgs.length)];
+  const text = `I scored ${score}/8 on Americanisms ${emoji} — can you beat me?\n\nAn interactive game about the hidden worldview in everyday American idioms.`;
+  if (navigator.share) {
+    navigator.share({ title: 'Americanisms', text });
+  } else {
+    navigator.clipboard.writeText(text).then(() => {
+      const toast = document.getElementById('share-toast');
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2200);
+    });
+  }
+}
+
+// ── DEBUG SHORTCUT: Shift+R → jump straight to results screen ──
+document.addEventListener('keydown', e => {
+  if (e.shiftKey && e.key === 'R') {
+    const sample = IDIOMS.slice(0, 8);
+    results = sample.map((id, i) => ({ idiom: id.idiom, category: id.category, correct: i % 3 !== 2 }));
+    score = results.filter(r => r.correct).length;
+    phase = 'end';
+    fadeTransition(() => renderEnd());
+  }
+});
+
+// ── INIT ──
+renderLanding();
+</script>
+</body>
+</html>
