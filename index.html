@@ -962,6 +962,7 @@ function fadeTransition(fn) {
   app.style.opacity = '0';
   setTimeout(() => {
     fn();
+    window.scrollTo(0, 0);
     app.style.transition = 'none';
     app.style.opacity = '0';
     requestAnimationFrame(() => requestAnimationFrame(() => {
