@@ -236,10 +236,9 @@
       cursor: pointer;
       letter-spacing: -0.02em;
       white-space: nowrap;
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      transition: transform 0.08s ease;
     }
-    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.14); }
-    .btn-primary:active { transform: translateY(0); box-shadow: none; }
+    .btn-primary:active { transform: scale(0.97); }
 
     /* ── GAME SCREEN ── */
     .game-screen {
@@ -565,6 +564,7 @@
       cursor: pointer;
       display: inline-flex;
       align-items: center;
+      align-self: flex-start;
       gap: 6px;
       transition: none;
       background: none;
@@ -670,10 +670,9 @@
       border: 1px solid var(--ink);
       cursor: pointer;
       white-space: nowrap;
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      transition: transform 0.08s ease;
     }
-    .btn-secondary:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-    .btn-secondary:active { transform: translateY(0); box-shadow: none; }
+    .btn-secondary:active { transform: scale(0.97); }
 
     /* ── END SCREEN ── */
     .end-screen {
@@ -726,6 +725,30 @@
       letter-spacing: -0.03em;
       color: var(--ink);
     }
+
+    @keyframes btnSlideUp {
+      from { opacity: 0; filter: blur(4px); transform: translateY(4px); }
+      to   { opacity: 1; filter: blur(0px); transform: translateY(0); }
+    }
+    .btn-slide-up { animation: btnSlideUp 0.64s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+    @keyframes btnSlideDown {
+      from { opacity: 0; filter: blur(4px); transform: translateY(-4px); }
+      to   { opacity: 1; filter: blur(0px); transform: translateY(0); }
+    }
+    .btn-slide-down { animation: btnSlideDown 0.64s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+    @keyframes btnExitUp {
+      from { opacity: 1; filter: blur(0px); transform: translateY(0); }
+      to   { opacity: 0; filter: blur(4px); transform: translateY(-4px); }
+    }
+    .btn-exit-up { animation: btnExitUp 0.64s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+    @keyframes btnExitDown {
+      from { opacity: 1; filter: blur(0px); transform: translateY(0); }
+      to   { opacity: 0; filter: blur(4px); transform: translateY(4px); }
+    }
+    .btn-exit-down { animation: btnExitDown 0.64s cubic-bezier(0.16, 1, 0.3, 1) both; }
 
     @keyframes digitRoll {
       0%   { opacity: 0; filter: blur(10px); transform: translateY(14px) scale(0.88); }
@@ -809,19 +832,9 @@
     }
 
     /* End buttons */
-    .end-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+    .end-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; align-items: center; }
 
     /* Share toast */
-    .share-toast {
-      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-      background: #1A1714; color: #fff;
-      font-size: 13px; font-weight: 500;
-      padding: 10px 20px; border-radius: 100px;
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.2s ease;
-      z-index: 999;
-    }
-    .share-toast.show { opacity: 1; }
 
     /* Category colors */
     .cat-animal    { background: #F5EDD6; }
@@ -915,7 +928,6 @@
 </div>
 
 <div id="app"></div>
-<div class="share-toast" id="share-toast">Copied to clipboard ✓</div>
 
 <script>
 // ── BANNER ──
@@ -1538,15 +1550,69 @@ function goHome() {
 function shareScore() {
   const msgs = ['🇺🇸','🦅','⭐'];
   const emoji = msgs[Math.floor(Math.random()*msgs.length)];
-  const text = `I scored ${score}/8 on Americanisms ${emoji} — can you beat me?\n\nAn interactive game about the hidden worldview in everyday American idioms.`;
-  if (navigator.share) {
-    navigator.share({ title: 'Americanisms', text });
+  const url = 'https://parkerrsimon.github.io/americanisms/';
+  const text = `I scored ${score}/8 on Americanisms ${emoji} — can you beat me?\n\nAn interactive game exploring America's favorite words.\n\n${url}`;
+
+  // Mobile: use native share sheet
+  const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+  if (isMobile && navigator.share) {
+    navigator.share({ title: 'Americanisms', text, url }).catch(() => {});
+    return;
+  }
+
+  // Desktop: copy to clipboard + show inline feedback
+  const checkSVG = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="margin-right:8px; flex-shrink:0;"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 1C5.92487 1 1 5.92487 1 12C1 18.0751 5.92487 23 12 23C18.0751 23 23 18.0751 23 12C23 5.92487 18.0751 1 12 1ZM17.2071 9.70711C17.5976 9.31658 17.5976 8.68342 17.2071 8.29289C16.8166 7.90237 16.1834 7.90237 15.7929 8.29289L10.5 13.5858L8.20711 11.2929C7.81658 10.9024 7.18342 10.9024 6.79289 11.2929C6.40237 11.6834 6.40237 12.3166 6.79289 12.7071L9.79289 15.7071C10.1834 16.0976 10.8166 16.0976 11.2071 15.7071L17.2071 9.70711Z" fill="currentColor"/></svg>`;
+  const swapBtn = (btn, enterHTML, enterClass, exitClass, duration = '0.64s') => {
+    const oldW = btn.offsetWidth;
+    btn.style.transition = 'none';
+    btn.style.width = oldW + 'px';
+    btn.style.position = 'relative';
+    void btn.offsetWidth;
+
+    // Overlay exiting content absolutely so it animates out simultaneously
+    const exitEl = document.createElement('span');
+    exitEl.className = exitClass;
+    exitEl.style.cssText = 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;';
+    exitEl.innerHTML = btn.innerHTML;
+
+    // Set entering content
+    btn.innerHTML = `<span class="${enterClass}" style="display:inline-flex;align-items:center;animation-duration:${duration};">${enterHTML}</span>`;
+    exitEl.style.animationDuration = duration;
+    btn.appendChild(exitEl);
+
+    // Measure natural width including padding by briefly releasing the constraint
+    btn.style.width = 'max-content';
+    const newW = btn.offsetWidth;
+    btn.style.width = oldW + 'px';
+    void btn.offsetWidth;
+
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      btn.style.transition = 'width 0.35s cubic-bezier(0.22, 1, 0.36, 1)';
+      btn.style.width = newW + 'px';
+    }));
+
+    exitEl.addEventListener('animationend', () => exitEl.remove(), { once: true });
+  };
+  const showFeedback = () => {
+    const btn = document.querySelector('.end-actions .btn-primary');
+    if (!btn) return;
+    const original = btn.innerHTML;
+    swapBtn(btn, `${checkSVG}Copied to clipboard`, 'btn-slide-up', 'btn-exit-down');
+    setTimeout(() => swapBtn(btn, original, 'btn-slide-down', 'btn-exit-up'), 2000);
+  };
+
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(showFeedback).catch(() => showFeedback());
   } else {
-    navigator.clipboard.writeText(text).then(() => {
-      const toast = document.getElementById('share-toast');
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 2200);
-    });
+    // Fallback for http / older browsers
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showFeedback();
   }
 }
 
