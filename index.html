@@ -726,6 +726,7 @@
       color: var(--ink);
     }
 
+
     @keyframes btnSlideUp {
       from { opacity: 0; filter: blur(4px); transform: translateY(4px); }
       to   { opacity: 1; filter: blur(0px); transform: translateY(0); }
@@ -1298,7 +1299,7 @@ function renderGame() {
       <div class="game-header">
         <button class="game-logo" onclick="goHome()" aria-label="Americanisms — return to home">Americanisms</button>
         <div class="game-meta">
-          <span class="progress-text" aria-live="polite" aria-atomic="true">Card ${currentIndex+1} of 8</span>
+          <span class="progress-text" aria-live="polite" aria-atomic="true">${currentIndex+1} of 8</span>
           <span class="score-badge" aria-live="polite" aria-atomic="true">${score} correct</span>
         </div>
       </div>
